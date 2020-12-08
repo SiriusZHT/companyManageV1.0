@@ -12,9 +12,6 @@ const feedback_form = () => import('../views/user/feedback_form.vue')
 const my_feedback = () => import('../views/user/my_feedback.vue')
 const my_inform = () => import('../views/user/my_inform.vue')
 const version = () => import('../views/user/version.vue')
-const first = () => import('../views/user/first.vue')
-const download = () => import('../views/user/download.vue')
-
 
 const manager_first = () => import('../views/manager/manager_first.vue')
 const add_version = () => import('../views/manager/add_version.vue')
@@ -25,7 +22,6 @@ const log = () => import('../views/manager/log.vue')
 const manage_users = () => import('../views/manager/manage_users')
 const my_worksheet = () => import('../views/manager/my_worksheet.vue')
 const software = () => import('../views/manager/software.vue')
-
 
 Vue.use(VueRouter)
 
@@ -49,10 +45,6 @@ const routes = [
         component:apply
       },
       {
-        path:'/user_first/first',
-        component:first
-      },
-      {
         path:'/user_first/common_question',
         component:common_question
       },
@@ -72,10 +64,7 @@ const routes = [
         path:'/user_first/version',
         component:version
       },
-      {
-        path:'/user_first/download',
-        component:download
-      },
+
      
     ]
   },
@@ -84,10 +73,6 @@ const routes = [
     path:'/manager_first',
     component:manager_first,
     children:[
-      {
-        path:'/manager_first/first',
-          component:first
-      },
       {
       path:'/manager_first/add_version',
         component:add_version
