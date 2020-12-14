@@ -49,7 +49,8 @@ export default {
             email:'',
             // code:'',
             // key:'',
-            pass:''
+            pass:'',
+            // userToken:''
         }
     },
 
@@ -90,7 +91,10 @@ methods:{
             // 获取后端token
             // this.userToken = res.data.result;
             // 储存到vuex
-            this.userToken = res.result;
+            var userToken = '';
+            console.log(userToken);
+            this.userToken = res.data.result;
+            console.log("userToken:" + this.userToken);
             // localStorage.setItem('Authorization',this.userToken);
             //  this.$store.commit("Authorization", this.userToken);
 //根据store中set_token方法将token保存至localStorage/sessionStorage中,this.userToken,获取token的value值 

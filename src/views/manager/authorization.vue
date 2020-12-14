@@ -1,15 +1,14 @@
 
 <template>
 <div class="center">
-    <Icon type="arrow-left" />
-    <a-page-header
-      class="header"
-      title="管理员中心 ｜ 权限管理"
-      @back=" () => { this.$router.push({ path: '../manager_first/' }); } "
-    />
+    <span>管理员中心 / 权限管理</span>
+    <br/>
+    <hr/>
+    <br/>
+
    
 
-    <!-- <button class="add_group">增加分组</button> -->
+    <el-button  @click="add_group_" class="add_group">增加角色</el-button>
     <div class="main">
       <el-table
     :data="tableData4"
@@ -26,14 +25,20 @@
     <el-table-column
       fixed
       prop="name"
-      label="分组名称"
-      width="200">
+      label="角色"
+      width="250">
     </el-table-column>
 
     <el-table-column
-      prop="username"
-      label="用户列表"
-      width="200">
+      prop="comment"
+      label="角色描述"
+      width="300">
+    </el-table-column>
+
+    <el-table-column
+      prop="remark"
+      label="备注"
+      width="300">
     </el-table-column>
 
     <el-table-column
@@ -43,10 +48,10 @@
 
       <template scope="scope">
         <el-button
-          @click.native.prevent="deleteRow(scope.$index, tableData4)"
+          @click.native.prevent="deleteRow(scope.$index,tableData4,scope.row.name)"
           type="text"
           size="small">
-          删除
+        <i class="el-icon-delete">删除</i>
         </el-button>
 
       
@@ -54,15 +59,40 @@
         @click="dialogFormVisibleshow(scope.row.name)"
           type="text"
           size="small">
-          设置权限
+         <i class="el-icon-setting">功能管理</i>
         </el-button>
+
+       
       </template>
     </el-table-column>
   </el-table>
 </div>
 
-<!-- 权限选择 -->
-<el-dialog class="dialog" title="设置权限" :visible.sync="dialogFormVisible">
+<!-- 增加角色弹出框 -->
+<el-dialog class="dialog2" title="增加角色"  :visible.sync="add_group">
+<el-form :model="ruleForm" >
+
+<el-form-item label="角色名称:" >
+    <el-input v-model="ruleForm.name"></el-input>
+  </el-form-item>
+
+  <el-form-item label="角色描述:" >
+    <el-input v-model="ruleForm.describe"></el-input>
+  </el-form-item>
+
+  <el-form-item label="备注:">
+    <el-input v-model="ruleForm.remark"></el-input>
+  </el-form-item>
+</el-form>
+
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="add_group_sure" class="sure">确定</el-button>
+    <el-button @click="add_group = false" class="cancel">取消</el-button>
+  </div>
+</el-dialog>
+
+<!-- 权限选择弹出框 -->
+<el-dialog class="dialog" title="设置功能权限" :visible.sync="dialogFormVisible">
 <div class="border">
   <form action="" class="load-indicator main-form form-ajax" id="managePrivForm" method="post" target="hiddenwin">
     <table class="table table-hover table-striped table-bordered" id="privList">
@@ -76,21 +106,31 @@
         <tr class="even">
               <th class="text-middle text-right thWidth">
                 <div class="checkbox-primary checkbox-inline checkbox-right check-all">
-                  <!-- <input type="checkbox" id="allCheckerindex"> -->
+                  <input type="checkbox" id="allCheckerindex" @click="allCheckerindex">
                   <label class="text-right" for="allCheckerindex">首页</label>
                 </div>
               </th>
               <td id="index" class="pv-10px" colspan="2">
                     <div class="group-item">
-                  <input type="checkbox"  name="bianli" @click="first" id="fi" value="0"> <label for="actions[index]index">首页</label>
+                  <input type="checkbox"  name="bianli" id="fi" value="0"> <label for="actions[index]index">首页</label>
                    </div>
               </td>
+        </tr>
+
+         <tr class="even">
+              <th class="text-middle text-right thWidth">
+                <div class="checkbox-primary checkbox-inline checkbox-right check-all">
+                  <input type="checkbox"  value="15" id="fi15" @click="usersall">
+                  <label class="text-right" for="allCheckerusers" style="color:#409EFF" >用户中心</label>
+                </div>
+              </th>
+            
         </tr>
 
         <tr class=" bg-gray">
         <th class="text-middle text-right thWidth">
           <div class="checkbox-primary checkbox-inline checkbox-right check-all">
-            <!-- <input type="checkbox" id="allCheckmyfeedback"> -->
+            <input type="checkbox" id="allCheckmyfeedback" @click="allCheckmyfeedback">
             <label class="text-right" for="allCheckmyfeedback">我的反馈</label>
           </div>
         </th>
@@ -108,7 +148,7 @@
         <tr class=" even">
         <th class="text-middle text-right thWidth">
           <div class="checkbox-primary checkbox-inline checkbox-right check-all">
-            <!-- <input type="checkbox" id="allCheckapply"> -->
+            <input type="checkbox" id="allCheckapply">
             <label class="text-right" for="allCheckapply">申请界面</label>
           </div>
         </th>
@@ -122,7 +162,7 @@
        <tr class=" bg-gray">
         <th class="text-middle text-right thWidth">
           <div class="checkbox-primary checkbox-inline checkbox-right check-all">
-            <!-- <input type="checkbox" id="allCheckapply"> -->
+            <input type="checkbox" id="allChecmyinform">
             <label class="text-right" for="allCheckapply">我的资料</label>
           </div>
         </th>
@@ -137,7 +177,7 @@
        <tr class="even">
         <th class="text-middle text-right thWidth">
           <div class="checkbox-primary checkbox-inline checkbox-right check-all">
-            <!-- <input type="checkbox" id="allCheckapply"> -->
+            <input type="checkbox" id="allCheckversion">
             <label class="text-right" for="allCheckapply">版本库</label>
           </div>
         </th>
@@ -148,10 +188,20 @@
             </td>
       </tr>
 
+       <tr class="even">
+              <th class="text-middle text-right thWidth">
+                <div class="checkbox-primary checkbox-inline checkbox-right check-all">
+                  <input type="checkbox"  value="17" id="fi17" @click="manager">
+                  <label class="text-right" for="allCheckmanagers" style="color:#409EFF">管理员中心</label>
+                </div>
+              </th>
+             
+        </tr>
+
       <tr class="even">
         <th class="text-middle text-right thWidth">
           <div class="checkbox-primary checkbox-inline checkbox-right check-all">
-            <!-- <input type="checkbox" id="allCheckapply"> -->
+            <input type="checkbox" id="allCheckfenpei" @click="fenpei">
             <label class="text-right" for="allCheckapply">分配工单</label>
           </div>
         </th>
@@ -168,7 +218,7 @@
       <tr class="bg-grey">
         <th class="text-middle text-right thWidth">
           <div class="checkbox-primary checkbox-inline checkbox-right check-all">
-            <!-- <input type="checkbox" id="allCheckapply"> -->
+            <input type="checkbox" id="allCheckmanage" @click="guanli">
             <label class="text-right" for="allCheckapply">管理用户</label>
           </div>
         </th>
@@ -189,7 +239,7 @@
        <tr class="bg-grey">
         <th class="text-middle text-right thWidth">
           <div class="checkbox-primary checkbox-inline checkbox-right check-all">
-            <!-- <input type="checkbox" id="allCheckapply"> -->
+            <input type="checkbox" id="allChecklog">
             <label class="text-right" for="allCheckapply">日志统计</label>
           </div>
         </th>
@@ -200,10 +250,33 @@
             </td>
       </tr>
 
+      <tr class="bg-grey">
+        <th class="text-middle text-right thWidth">
+          <div class="checkbox-primary checkbox-inline checkbox-right check-all">
+            <input type="checkbox" id="allCheckchuli">
+            <label class="text-right" for="allCheckapply">处理申请</label>
+          </div>
+        </th>
+            <td id="testreport" class="pv-10px" colspan="2">
+            <div class="group-item">
+            <div class="checkbox-primary checkbox-inline"><input type="checkbox"  name="bianli" value="13" id="fi13"> 
+            <label for="actions[testreport]browse">处理申请</label></div> </div>
+            </td>
+      </tr>
+
        <tr class="bg-grey">
         <th class="text-middle text-right thWidth">
           <div class="checkbox-primary checkbox-inline checkbox-right check-all">
-            <!-- <input type="checkbox" id="allCheckapply"> -->
+            <input type="checkbox" value="16" id="fi16" @click="jishu">
+            <label class="text-right" for="allChecktec" style="color:#409EFF">技术人员中心</label>
+          </div>
+        </th>
+      </tr>
+
+        <tr class="bg-grey">
+        <th class="text-middle text-right thWidth">
+          <div class="checkbox-primary checkbox-inline checkbox-right check-all">
+            <input type="checkbox" id="allCheckadd">
             <label class="text-right" for="allCheckapply">增加版本库</label>
           </div>
         </th>
@@ -217,21 +290,20 @@
       <tr class="bg-grey">
         <th class="text-middle text-right thWidth">
           <div class="checkbox-primary checkbox-inline checkbox-right check-all">
-            <!-- <input type="checkbox" id="allCheckapply"> -->
-            <label class="text-right" for="allCheckapply">处理申请</label>
+            <input type="checkbox" id="allCheckfeeback">
+            <label class="text-right" for="allCheckfeeback">处理反馈</label>
           </div>
         </th>
             <td id="testreport" class="pv-10px" colspan="2">
             <div class="group-item">
-            <div class="checkbox-primary checkbox-inline"><input type="checkbox"  name="bianli" value="13" id="fi13"> 
-            <label for="actions[testreport]browse">处理申请</label></div> </div>
+            <div class="checkbox-primary checkbox-inline"><input type="checkbox"  name="bianli" value="14" id="fi14"> 
+            <label for="actions[testreport]browse">处理反馈</label></div> </div>
             </td>
       </tr>
 
       </tbody>
     </table>
   </form>
-  
   
 
 </div>  
@@ -247,42 +319,48 @@
 </template>
 
 <script>
+
 // var i = 0;
 import $ from  'jquery'
-// import store from '../../store'
-//  console.log(store.state.showfirst)
-
-// 
+    
   export default {
     data() {
 
       return {
+
+        ruleForm:{
+          name:'',
+          describe:'',
+          remark:'',
+        },
         character:'',
 
         string:[],
         list:[],
 
-         tableData4:[],
-        dialogFormVisible:false,
-       
+         tableData4:[{
+           name:'admin',
+           userdescribe:'高级管理员，可以管理用户等'
+         }],
 
+        dialogFormVisible:false,
+        add_group:false,
+       
       }
     },
 
-    //遍历后端用户
+    // 获取后端所有的角色
      mounted(){
         this.axios({
-          url:'http://121.36.57.122:8080/user/getAllUser',
-          headers: {
-          Authorization:
-            // "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9.eyJpZCI6IjJmODMxYmIzLTYwNDktNDYwNy05Y2YzLTMxMGM0YmQyMjY0YSIsImV4cCI6MTYwNzQwNDgzOH0.j3NFo27Z8lgzSpsXBJpnUJJDpygOqxx0FunaYFr-ynggha2ToWefa8DnDiFl-AJt"
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9.eyJpZCI6IjJmODMxYmIzLTYwNDktNDYwNy05Y2YzLTMxMGM0YmQyMjY0YSIsImV4cCI6MTYwNzU2MTUwMX0.wziYra0H-c0SAjnTWxgFb-pver4HFyjHJ3Nt0PBzQQx2m8KrcHbXnFscD8-Dq_QL",
-        
-        },
+          url:'http://121.36.57.122:8080/role/getall',
+          headers:{
+                 'Authorization':sessionStorage.getItem("token")
+                //  localStorage.getItem('token')
+             },
         }).then(res=>{
            console.log(res);
            
-           this.list = res.data.result
+           this.list = res.result ||res.data.result;
          
             // console.log("list" + this.list);
            this.tableData4 = this.list
@@ -296,15 +374,147 @@ import $ from  'jquery'
         });
        },
 
+
     methods: {
-      first(){
-        // if(event.target.checked){
-        //   this.$store.commit('change',true); 
-        // }
-        // else{
-        //   this.$store.commit('change',false); 
-        // }
+
+    //这里的功能是 每一栏的全选按钮，并且控制导航栏的显示和隐藏
+    allCheckerindex(){
+      var a = document.getElementById('allCheckerindex')
+      if(a.checked){
+        console.log(a.checked)
+        $("input:checkbox[value='0']").attr('checked','true');
+      }else{
+          $("input:checkbox[value='0']").attr('checked',false);
+      }
+    },
+
+    usersall(){
+      var a = document.getElementById('fi15')
+      if(a.checked){
+        console.log(a.checked)
+        $("input:checkbox[value='1']").attr('checked','true');
+        $("input:checkbox[value='2']").attr('checked','true');
+        $("input:checkbox[value='3']").attr('checked','true');
+        $("input:checkbox[value='4']").attr('checked','true');
+        $("input:checkbox[value='5']").attr('checked','true');
+      }else{
+          $("input:checkbox[value='1']").attr('checked',false);
+          $("input:checkbox[value='2']").attr('checked',false);
+          $("input:checkbox[value='3']").attr('checked',false);
+          $("input:checkbox[value='4']").attr('checked',false);
+          $("input:checkbox[value='5']").attr('checked',false);
+      }
+    },
+
+    allCheckmyfeedback(){
+       var a = document.getElementById('allCheckmyfeedback')
+       if(a.checked){
+        console.log(a.checked)
+        $("input:checkbox[value='1']").attr('checked','true');
+         $("input:checkbox[value='2']").attr('checked','true');
+      }else{
+          $("input:checkbox[value='1']").attr('checked',false);
+           $("input:checkbox[value='2']").attr('checked',false);
+      }
+    },
+
+  manager(){
+     var a = document.getElementById('fi17')
+       if(a.checked){
+        console.log(a.checked)
+        $("input:checkbox[value='6']").attr('checked','true');
+        $("input:checkbox[value='7']").attr('checked','true');
+        $("input:checkbox[value='8']").attr('checked','true');
+        $("input:checkbox[value='9']").attr('checked','true');
+        $("input:checkbox[value='10']").attr('checked','true');
+        $("input:checkbox[value='11']").attr('checked','true');
+        $("input:checkbox[value='13']").attr('checked','true');
+      }else{
+          $("input:checkbox[value='6']").attr('checked',false);
+          $("input:checkbox[value='7']").attr('checked',false);
+          $("input:checkbox[value='8']").attr('checked',false);
+          $("input:checkbox[value='9']").attr('checked',false);
+          $("input:checkbox[value='10']").attr('checked',false);
+          $("input:checkbox[value='11']").attr('checked',false);
+          $("input:checkbox[value='13']").attr('checked',false);
+      }
+  },
+
+
+  fenpei(){
+    var a = document.getElementById('allCheckfenpei')
+       if(a.checked){
+        console.log(a.checked)
+        $("input:checkbox[value='6']").attr('checked','true');
+         $("input:checkbox[value='7']").attr('checked','true');
+      }else{
+          $("input:checkbox[value='6']").attr('checked',false);
+          $("input:checkbox[value='7']").attr('checked',false);
+      }
+  },
+
+  guanli(){
+    var a = document.getElementById('allCheckmanage')
+       if(a.checked){
+        console.log(a.checked)
+        $("input:checkbox[value='8']").attr('checked','true');
+        $("input:checkbox[value='9']").attr('checked','true');
+        $("input:checkbox[value='10']").attr('checked','true');
+      }else{
+        $("input:checkbox[value='8']").attr('checked',false);
+        $("input:checkbox[value='9']").attr('checked',false);
+        $("input:checkbox[value='10']").attr('checked','true');
+      }
+  },
+
+jishu(){
+  var a = document.getElementById('fi16')
+   if(a.checked){
+        console.log(a.checked)
+        $("input:checkbox[value='12']").attr('checked','true');
+        $("input:checkbox[value='14']").attr('checked','true');
+      }else{
+          $("input:checkbox[value='12']").attr('checked',false);
+          $("input:checkbox[value='14']").attr('checked',false);
+      }
+},
+      // 显示增加角色弹出框
+      add_group_(){
+        this.add_group = true;
       },
+
+
+
+//将增加的角色信息传给后端
+add_group_sure(){
+  if(this.ruleForm.name != '' && this.ruleForm.describe!='' && this.ruleForm.remark != ''){
+     this.axios({
+          url:'http://121.36.57.122:8080/role/add',
+          headers:{
+              'Authorization':sessionStorage.getItem("token")
+           },
+           method:'post',
+           params:{
+             name:this.ruleForm.name,
+             comment:this.ruleForm.describe,
+             remark:this.ruleForm.remark
+           }
+        }).then(res=>{
+          // console.log(this.ruleForm.name)
+          // console.log(this.ruleForm.describe)
+          console.log(res)
+          this.$message.success('增加角色成功,请刷新页面查看！');
+        }).catch(err=>{
+          console.log(err);
+        })
+        this.add_group = false
+  }else{
+    this.add_group = false
+    this.$message.error('请输入相关信息');
+  }
+},
+
+//设置权限，获取角色权限
        dialogFormVisibleshow(data){
         // console.log(data)//  console.log(index,1)
         
@@ -314,12 +524,9 @@ import $ from  'jquery'
           this.axios({
          
            url:'http://121.36.57.122:8080/rolePremission/getAllPreByName',
-           headers: {
-          Authorization:
-            // "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9.eyJpZCI6IjJmODMxYmIzLTYwNDktNDYwNy05Y2YzLTMxMGM0YmQyMjY0YSIsImV4cCI6MTYwNzQwNDgzOH0.j3NFo27Z8lgzSpsXBJpnUJJDpygOqxx0FunaYFr-ynggha2ToWefa8DnDiFl-AJt"
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9.eyJpZCI6IjJmODMxYmIzLTYwNDktNDYwNy05Y2YzLTMxMGM0YmQyMjY0YSIsImV4cCI6MTYwNzU2MTUwMX0.wziYra0H-c0SAjnTWxgFb-pver4HFyjHJ3Nt0PBzQQx2m8KrcHbXnFscD8-Dq_QL",
-        
-        },
+           headers:{
+              'Authorization':sessionStorage.getItem("token")
+           },
            params:{
               name:this.character
            },
@@ -329,7 +536,7 @@ import $ from  'jquery'
           // let i = 0
            console.log(res)
             // if(res.result[0] == 1)
-             console.log(res.data.result.length)
+             console.log(res.result.length)
           // var len = res.result.length;
           
           // for(i;i<len;i++){
@@ -345,46 +552,81 @@ import $ from  'jquery'
           // $("input:checkbox[value='1']").attr('checked','true');
 
           if(res.result[0] == 1){
+            console.log("is 1")
              $("input:checkbox[value='0']").attr('checked','true');
-          }if(res.result[1] == 1){
+          }else{
+            console.log("not 1")
+             $("input:checkbox[value='0']").attr('checked',false);
+          }
+          if(res.result[1] == 1){
              $("input:checkbox[value='1']").attr('checked','true');
-           }
+           }else{
+             $("input:checkbox[value='1']").attr('checked',false);
+          }
            if(res.result[2] == 1){
              $("input:checkbox[value='2']").attr('checked','true');
-           }
+           }else{
+             $("input:checkbox[value='2']").attr('checked',false);
+          }
            if(res.result[3] == 1){
              $("input:checkbox[value='3']").attr('checked','true');
-           }
+           }else{
+             $("input:checkbox[value='3']").attr('checked',false);
+          }
            if(res.result[4] == 1){
              $("input:checkbox[value='4']").attr('checked','true');
-           }
+           }else{
+             $("input:checkbox[value='4']").attr('checked',false);
+          }
            if(res.result[5] == 1){
              $("input:checkbox[value='5']").attr('checked','true');
-           }
+           }else{
+             $("input:checkbox[value='5']").attr('checked',false);
+          }
            if(res.result[6] == 1){
              $("input:checkbox[value='6']").attr('checked','true');
-           }
+           }else{
+             $("input:checkbox[value='6']").attr('checked',false);
+          }
            if(res.result[7] == 1){
              $("input:checkbox[value='7']").attr('checked','true');
-           }
+           }else{
+             $("input:checkbox[value='7']").attr('checked',false);
+          }
            if(res.result[8] == 1){
              $("input:checkbox[value='8']").attr('checked','true');
-           }
+           }else{
+             $("input:checkbox[value='8']").attr('checked',false);
+          }
            if(res.result[9] == 1){
              $("input:checkbox[value='9']").attr('checked','true');
-           }
+           }else{
+             $("input:checkbox[value='9']").attr('checked',false);
+          }
            if(res.result[10] == 1){
              $("input:checkbox[value='10']").attr('checked','true');
-           }
+           }else{
+             $("input:checkbox[value='10']").attr('checked',false);
+          }
            if(res.result[11] == 1){
              $("input:checkbox[value='11']").attr('checked','true');
-           }
+           }else{
+             $("input:checkbox[value='11']").attr('checked',false);
+          }
            if(res.result[12] == 1){
              $("input:checkbox[value='12']").attr('checked','true');
-           }
+           }else{
+             $("input:checkbox[value='12']").attr('checked',false);
+          }
            if(res.result[13] == 1){
              $("input:checkbox[value='13']").attr('checked','true');
-           }
+           }else{
+             $("input:checkbox[value='13']").attr('checked',false);
+          }if(res.result[14] == 1){
+             $("input:checkbox[value='14']").attr('checked','true');
+           }else{
+             $("input:checkbox[value='14']").attr('checked',false);
+          }
           
           
 
@@ -395,24 +637,25 @@ import $ from  'jquery'
          this.dialogFormVisible = true;
         // console.log('dadada')
         // 获取当前角色的权限
-        
           
        },
 
+//更改确定按钮：将更改权限传给后端
       dialogFormVisible_sure(){ 
+
+
         var A = '';var B ='';var C='';var D='';
          var E = '';var F = '';var G = '';var H = '';var I = '';var J = '';
          var K ='';var L ='';var M = '';var N = ''
+         var W =''
+
         var a = document.getElementById('fi')
         console.log(a.checked);
         if(a.checked){
-           this.$store.commit('change',true);
-          //  this.string.push(0)
               A = '0';
               console.log(A)
          
         }else{
-          this.$store.commit('change',false);
           A = '#';
         }
 
@@ -520,7 +763,13 @@ import $ from  'jquery'
         }else{
           M = '#'
         }
-       
+
+       var w = document.getElementById('fi14')
+        if(w.checked){
+          W = '14'
+        }else{
+          W = '#'
+        }
 
         this.axios({
           url:'http://121.36.57.122:8080/rolePremission/update',
@@ -531,7 +780,7 @@ import $ from  'jquery'
 
           params:{
             premission:A+','+B +',' +C +','+D+','+E +',' +F +','+G+','
-            +H +',' +I +','+J+','+K +',' +L +','+M +',' + N,
+            +H +',' +I +','+J+','+K +',' +L +','+M +',' + N +','+W,
             role:this.character
           }
         }).then(res=>{
@@ -545,45 +794,55 @@ import $ from  'jquery'
         
          this.dialogFormVisible = false;
       },
+
+      
      
-      deleteRow(index, rows) {
-        rows.splice(index, 1);
-        
-      },
-
-      toggleSelection(rows) {
-        if (rows) {
-          rows.forEach(row => {
-            this.$refs.multipleTable.toggleRowSelection(row);
-          });
-        } else {
-          this.$refs.multipleTable.clearSelection();
-        }
-      },
-
-      handleSelectionChange(val) {
-        this.multipleSelection = val;
-      },
-
-       handleEdit(index, row) {
-        console.log(index, row);
+     //删除行
+      deleteRow(index, rows,data) {
+  
+        console.log(data)
+        this.axios({
+          url:'http://121.36.57.122:8080/role/delete',
+          headers:{
+              'Authorization':sessionStorage.getItem("token")
+           },
+           params:{
+             name:data
+           }
+        }).then(res=>{
+          console.log(res)
+          rows.splice(index,1);
+          this.$message.success('删除成功！');
+        }).catch(err=>{
+          console.log(err);
+        })
       },
     },
     
     
   }
+    
 </script>
 
 <style scoped>
 
+.add_group{
+  width:50px;
+   height:30px;
+   
+}
 
 .cancel{
    width:50px;
    height:30px;
+
 }
 .sure{
   width:50px;
   height:30px;
+  color: #FFF;
+  background-color: #409EFF;
+  border-color: #409EFF;
 }
 /* tr {
     display: table-row;
@@ -612,7 +871,7 @@ import $ from  'jquery'
     /* float:right; */
 }
 .thWidth {
-    width: 20% !important;
+    width: 25% !important;
 }
 *, :after, :before {
     -webkit-box-sizing: border-box;
@@ -626,7 +885,7 @@ table {
 }
 .group-item {
     display: block;
-    width: 220px;
+    width: 150px;
     float: left;
     font-size: 14px;
 }

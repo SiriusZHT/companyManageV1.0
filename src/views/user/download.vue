@@ -1,19 +1,22 @@
 <template>
   <div class="center">
+
+    <!-- 文章标题 -->
     <div class="title">
       {{ title }}
     </div>
 
+<!-- 发布时间和发布人员 -->
     <span class="time"
       ><i class="el-icon-time"></i> &emsp;{{ time }}
       <i class="el-icon-edit"></i> &emsp;{{ editor }}
     </span>
 
+<!-- 摘要 -->
     <div class="summery">摘要： {{ summery }}</div>
 
     <!-- 解析后端传来的富文本问题 -->
     <div class="content">
-
       <div class="text">
         <span>一、此版本信息</span>
         <div class="content_text_content">
@@ -33,7 +36,7 @@
       <div class="version">
         <span>三、下载地址</span>
         <div class="content_version">
-
+            <!-- 版本下载地址按下按钮请求后台的版本信息 -->
           <el-table :data="tableData4"  style="width:100%">
             <el-table-column prop="system" label="适用系统" width="">
             </el-table-column>
@@ -59,6 +62,7 @@
 </template>
 
 <script>
+// 引入全局变量 将前面的标题信息传入后台获取文章信息
 import store from "../../store";
 // var data = store.state.data
 console.log(store.state.data);
@@ -92,10 +96,7 @@ export default {
       this.axios({
           url:'http://121.36.57.122:8080/edition/getByTitle',
           headers:{
-              // Authorization: sessionStorage.getItem("token"),
-              'Authorization':
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9.eyJpZCI6IjJmODMxYmIzLTYwNDktNDYwNy05Y2YzLTMxMGM0YmQyMjY0YSIsImV4cCI6MTYwNzY3MTMzNX0.3R-FVoBpwueeTBlFXu0JfqqhtHbqWZA4WvRjQsCT3u_DGsNyf2FtSZ3yjURYKRn0"
-          
+              Authorization: sessionStorage.getItem("token"),
           },
           params:{
               title:store.state.data
@@ -105,13 +106,12 @@ export default {
           console.log(res)
           //这里不想要数组
           // console.log(res.result[0].title)
-           this.title = res.data.result.title
-           this.time = res.data.result.time
-            this.editor = res.data.result.username
-           this.summery = res.data.result.remark
-           this.solution = res.data.result.solution
-           this.version_mesg = res.data.result.eddescribe 
-           this.editor = res.data.result.username
+           this.title = res.result.title
+           this.time = res.result.time
+            this.editor = res.result.username
+           this.summery = res.result.remark
+           this.solution = res.result.solution
+           this.version_mesg = res.result.eddescribe 
       }).catch(err=>{
           console.log(err)
       })
@@ -188,7 +188,7 @@ i {
 .center {
   height: 100%;
   /* border: 1px solid black; */
-  width: 90%;
-  margin-left: 5%;
+  width: 60%;
+  margin-left: 20%;
 }
 </style>

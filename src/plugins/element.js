@@ -4,6 +4,7 @@ import {Form,FormItem} from 'element-ui' //按需导入相应的组件
 import {Input,Row,Dialog,Select,Option,Divider,Message, MessageBox, Table,TableColumn,Pagination,Transfer,
 Col,Switch,Checkbox,Radio,RadioGroup,CheckboxGroup,TimePicker,DatePicker,Image,Carousel,CarouselItem,Breadcrumb,BreadcrumbItem,Card} from 'element-ui'
 import {Scrollbar} from 'element-ui'
+import {MenuItem,Submenu,MenuItemGroup,Menu} from 'element-ui'
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
 Vue.config.productionTip = false;
@@ -39,5 +40,9 @@ Vue.use(Breadcrumb)
 Vue.use(BreadcrumbItem)
 Vue.use(Card)
 Vue.use(Icon)
+Vue.use(MenuItemGroup)
+Vue.use(MenuItem)
+Vue.use(Submenu)
+Vue.use(Menu)
 Vue.prototype.$confirm=MessageBox.confirm
 Vue.prototype.$message=Message

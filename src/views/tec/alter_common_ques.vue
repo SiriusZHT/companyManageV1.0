@@ -1,11 +1,9 @@
 <template>
 <div class="center">
-    <Icon type="arrow-left" />
-    <a-page-header
-      class="header"
-      title="管理员中心 ｜ 增加版本信息"
-      @back=" () => { this.$router.push({ path: '../manager_first/' }); } "
-    />
+    <span>管理员中心 / 常见问题修改</span>
+    <br/>
+    <hr/>
+    <br/>
      <div class="text"> 
         <el-row class="warp">
             <el-col :span="24" class="warp-main">
